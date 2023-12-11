@@ -1,13 +1,13 @@
-const Cars = require('./cars-model')
+const Car = require('./cars-model')
 
-const db = require('../../data/db-config')
 
 const checkCarId = async (req, res, next) => {
   try {
-    const car = await Cars.getById(req.params.id)
+    const car = await Car.getById(req.params.id)
     if (!car) {
-      next({ status: 404, message: `car with id ${req.params.id} is not found` })
+      next({ status: 404, message: 'not found' })
     } else {
+      req.car = car
       next()
     }
   } catch (err) {
@@ -16,27 +16,39 @@ const checkCarId = async (req, res, next) => {
 }
 
 const checkCarPayload = (req, res, next) => {
-  // DO YOUR MAGIC
+ if (!req.body.vin) return next({
+  status: 400,
+  message: `vin is missing`,
+ })
+ if (!req.body.make) return next({
+  status: 400,
+  message: `make is missing`,
+ })
+ if (!req.body.model) return next({
+  status: 400,
+  message: `model is missing`,
+ })
+ if (!req.body.mileage) return next({
+  status: 400,
+  message: `mileage is missing`,
+ })
+ next()
 }
 
 const checkVinNumberValid = (req, res, next) => {
-  // DO YOUR MAGIC
+ next()
 }
 
 const checkVinNumberUnique = async (req, res, next) => {
-  try {
-    const existingVin = await db('cars').where('name', req.body.vin.trim()).first()
-    if (existingVin) {
-      next({ status: 400, message: `vin ${req.body.vin} already exists` })
-    } else {
-      next()
-    }
-  } catch (err) {
-    next(err)
-  }
+  next()
 }
 
-
+module.exports = {
+  checkCarId,
+  checkCarPayload,
+  checkVinNumberValid,
+  checkVinNumberUnique,
+}
 
 
 //   - `checkCarPayload` returns a status 400 with a `{ message: "<field name> is missing" }` if any required field is missing.
