@@ -1,5 +1,5 @@
 const Car = require('./cars-model')
-
+const vin = require('vin-validator')
 
 const checkCarId = async (req, res, next) => {
   try {
@@ -36,7 +36,13 @@ const checkCarPayload = (req, res, next) => {
 }
 
 const checkVinNumberValid = (req, res, next) => {
- next()
+ if (vin.validate(req.body.vin)) {
+  next()
+ } else {
+  next({ 
+    status: 400, 
+    message: `vin ${req.body.vin} is invalid`})
+ }
 }
 
 const checkVinNumberUnique = async (req, res, next) => {
@@ -49,10 +55,3 @@ module.exports = {
   checkVinNumberValid,
   checkVinNumberUnique,
 }
-
-
-//   - `checkCarPayload` returns a status 400 with a `{ message: "<field name> is missing" }` if any required field is missing.
-
-//   - `checkVinNumberValid` returns a status 400 with a `{ message: "vin <vin number> is invalid" }` if the vin number is [invalid](https://www.npmjs.com/package/vin-validator).
-
-//   - `checkVinNumberUnique` returns a status 400 with a `{ message: "vin <vin number> already exists" }` if the vin number already exists in the database.
