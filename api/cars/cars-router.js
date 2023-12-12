@@ -1,5 +1,4 @@
 const express = require('express')
-const Car = require('./cars-model')
 
 const {
     checkCarId,
@@ -9,10 +8,11 @@ const {
 } = require('./cars-middleware')
 
 const router = express.Router()
+const Car = require('./cars-model')
 
 router.get('/', async (req, res, next) => {
     try {
-        const cares = await Car.getAll()
+        const cars = await Car.getAll()
         res.json(cars)
     } catch (err) {
         next(err)

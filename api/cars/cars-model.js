@@ -1,7 +1,7 @@
 const db = require('../../data/db-config')
 
 const getAll = () => {
-  return db('cars')
+  return db('cars').orderBy('id')
 }
 
 const getById = (id) => {
@@ -14,7 +14,9 @@ const getByVin = (vin) => {
 
 const create = async (car) => {
   return db('cars').insert(car)
-    .then((id) => getByVin(id))
+  .then(([id]) => {
+    return getById(id)
+  })
 }
 
 module.exports = {
